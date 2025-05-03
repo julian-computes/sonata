@@ -1,0 +1,10 @@
+services:
+  # PostgreSQL database (non-persistent)
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sonata_dev
+    ports:
+      - "5432:5432"

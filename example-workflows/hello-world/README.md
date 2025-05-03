@@ -1,0 +1,1 @@
+This example demonstrates a simple workflow that returns "Hello, world!" as a string.
