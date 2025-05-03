@@ -17,7 +17,7 @@ defmodule OrchestraWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import OrchestraWeb.Gettext
+  use Gettext, backend: OrchestraWeb.Gettext
 
   @doc """
   Renders a modal.

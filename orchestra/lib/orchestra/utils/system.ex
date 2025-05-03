@@ -3,10 +3,10 @@ defmodule Orchestra.Utils.SystemBehaviour do
 end
 
 defmodule Orchestra.Utils.System do
-  @behaviour Orchestra.Runtime.SystemBehaviour
+  @behaviour Orchestra.Utils.SystemBehaviour
 
   @impl true
-  def cmd(command, args, opts) do
+  def cmd(command, args, opts \\ []) do
     System.cmd(command, args, opts)
   end
 end

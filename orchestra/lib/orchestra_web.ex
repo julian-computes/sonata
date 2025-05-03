@@ -43,7 +43,7 @@ defmodule OrchestraWeb do
         layouts: [html: OrchestraWeb.Layouts]
 
       import Plug.Conn
-      import OrchestraWeb.Gettext
+      use Gettext, backend: OrchestraWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -85,7 +85,7 @@ defmodule OrchestraWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import OrchestraWeb.CoreComponents
-      import OrchestraWeb.Gettext
+      use Gettext, backend: OrchestraWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

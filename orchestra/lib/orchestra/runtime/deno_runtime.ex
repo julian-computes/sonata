@@ -3,7 +3,9 @@ defmodule Orchestra.Runtime.DenoRuntime do
   Runtime for executing JavaScript/TypeScript workflows using Deno.
   """
 
-  def execute_file(folder_path, params) do
+  @workflow_runner_path Application.app_dir(:orchestra, "priv/deno/workflow-runner.ts")
+
+  def execute_file(folder_path, params \\ []) do
     with {:ok, main_file_path} <- validate_main_file(folder_path),
          {:ok, temp_path} <- create_temp_file(),
          {:ok, output} <- run_deno_workflow(folder_path, main_file_path, temp_path, params) do
@@ -19,10 +21,6 @@ defmodule Orchestra.Runtime.DenoRuntime do
     else
       {:error, "main.ts not found in folder: #{folder_path}"}
     end
-  end
-
-  defp system do
-    Application.get_env(:orchestra, :system, Orchestra.Utils.System)
   end
 
   defp create_temp_file do
@@ -47,10 +45,9 @@ defmodule Orchestra.Runtime.DenoRuntime do
 
   defp run_deno_workflow(folder_path, main_file_path, temp_path, params) do
     try do
-      runner_path = Application.app_dir(:orchestra, "priv/deno/workflow-runner.ts")
-      deno_args = build_deno_args(runner_path, main_file_path, temp_path, params)
+      deno_args = build_deno_args(@workflow_runner_path, main_file_path, temp_path, params)
 
-      case system().cmd("deno", deno_args, stderr_to_stdout: true, cd: folder_path) do
+      case Orchestra.Application.system().cmd("deno", deno_args, stderr_to_stdout: true, cd: folder_path) do
         {output, 0} ->
           IO.puts("Output: #{output}")
           File.read(temp_path)
