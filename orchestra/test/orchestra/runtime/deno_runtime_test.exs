@@ -24,7 +24,7 @@ defmodule Orchestra.Runtime.DenoRuntimeTest do
       params = %{"test" => "value"}
 
       # Expect the system command to be called with specific arguments
-      expect(Orchestra.Runtime.SystemMock, :cmd, fn cmd, args, opts ->
+      expect(Orchestra.Utils.SystemMock, :cmd, fn cmd, args, opts ->
         # Assert we're calling deno
         assert cmd == "deno"
         # Assert we're in the right directory
@@ -76,7 +76,7 @@ defmodule Orchestra.Runtime.DenoRuntimeTest do
     end
 
     test "handles deno execution failure", %{tmp_dir: tmp_dir} do
-      expect(Orchestra.Runtime.SystemMock, :cmd, fn _cmd, _args, _opts ->
+      expect(Orchestra.Utils.SystemMock, :cmd, fn _cmd, _args, _opts ->
         {"Failed to execute workflow: Runtime error", 1}
       end)
 

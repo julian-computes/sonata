@@ -22,7 +22,7 @@ defmodule Orchestra.Runtime.DenoRuntime do
   end
 
   defp system do
-    Application.get_env(:orchestra, :system, Orchestra.Runtime.System)
+    Application.get_env(:orchestra, :system, Orchestra.Utils.System)
   end
 
   defp create_temp_file do
