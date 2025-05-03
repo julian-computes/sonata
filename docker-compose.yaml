@@ -8,3 +8,17 @@ services:
       POSTGRES_DB: sonata_dev
     ports:
       - "5432:5432"
+  
+  orchestra:
+    build:
+      context: orchestra
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/sonata_dev
+      # Insecure secret key base for local development
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-eQZOc2gU1FJGUnLa9HDso/W4GzWlLbEB+VNrEUoMdeZX3StNaosubaukQLKc8m7i}
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+  
