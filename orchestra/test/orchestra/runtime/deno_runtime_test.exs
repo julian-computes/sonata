@@ -53,7 +53,7 @@ defmodule Orchestra.Runtime.DenoRuntimeTest do
 
   defp assert_deno_args(args, tmp_dir, params) do
     assert "run" in args
-    assert "--allow-read=." in args
+    assert "--allow-read=#{tmp_dir}" in args
     assert Path.join(tmp_dir, "main.ts") in args
 
     params_index = Enum.find_index(args, &(&1 == "--params"))

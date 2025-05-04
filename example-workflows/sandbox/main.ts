@@ -1,7 +1,7 @@
 import { logError } from "./handle-error.ts";
 
 export const main = async () => {
-    const fileContent = await Deno.readTextFile("readable-file.txt");
+    const fileContent = await Deno.readTextFile("./readable-file.txt");
     
     // Try to list parent directory (will fail due to sandbox)
     let directoryInfo = "";
