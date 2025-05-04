@@ -27,7 +27,8 @@ defmodule Orchestra.Runtime.DenoRuntimeTest do
         {"Workflow executed successfully", 0}
       end)
 
-      assert {:ok, @mock_result} == Orchestra.Runtime.DenoRuntime.execute_file(tmp_dir, params)
+      assert {:ok, {@mock_result, "Workflow executed successfully"}} ==
+               Orchestra.Runtime.DenoRuntime.execute_file(tmp_dir, params)
     end
 
     test "handles deno execution failure", %{tmp_dir: tmp_dir} do
@@ -42,7 +43,7 @@ defmodule Orchestra.Runtime.DenoRuntimeTest do
     test "returns error when main.ts is missing", %{tmp_dir: tmp_dir} do
       File.rm!(Path.join(tmp_dir, "main.ts"))
       {:error, message} = Orchestra.Runtime.DenoRuntime.execute_file(tmp_dir, %{})
-      assert String.starts_with?(message, "main.ts not found in folder: ")
+      assert message == "main.ts not found in workflow folder"
     end
   end
 

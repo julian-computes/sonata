@@ -3,14 +3,18 @@ defmodule Orchestra.Runtime.DenoRuntime do
   Runtime for executing JavaScript/TypeScript workflows using Deno.
   """
 
+  @type t :: module()
+
   @workflow_runner_path Application.app_dir(:orchestra, "priv/deno/workflow-runner.ts")
 
-  @callback execute_file(String.t(), list()) :: {:ok, map()} | {:error, String.t()}
+  @callback execute_file(String.t(), list()) :: {:ok, {map(), String.t()}} | {:error, String.t()}
   def execute_file(folder_path, params \\ []) do
     with {:ok, main_file_path} <- validate_main_file(folder_path),
          {:ok, temp_path} <- create_temp_file(),
-         {:ok, output} <- run_deno_workflow(folder_path, main_file_path, temp_path, params) do
-      parse_output(output)
+         {:ok, result, output} <-
+           run_deno_workflow(folder_path, main_file_path, temp_path, params),
+         {:ok, parsed_result} <- parse_output(result) do
+      {:ok, {parsed_result, output}}
     end
   end
 
@@ -20,7 +24,7 @@ defmodule Orchestra.Runtime.DenoRuntime do
     if File.exists?(main_file_path) do
       {:ok, main_file_path}
     else
-      {:error, "main.ts not found in folder: #{folder_path}"}
+      {:error, "main.ts not found in workflow folder"}
     end
   end
 
@@ -54,8 +58,10 @@ defmodule Orchestra.Runtime.DenoRuntime do
              cd: folder_path
            ) do
         {output, 0} ->
-          IO.puts("Output: #{output}")
-          File.read(temp_path)
+          case File.read(temp_path) do
+            {:ok, result} -> {:ok, result, output}
+            {:error, reason} -> {:error, "Failed to read output file: #{reason}"}
+          end
 
         {error, _exit_code} ->
           {:error, error}

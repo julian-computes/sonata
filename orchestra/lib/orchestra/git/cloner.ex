@@ -19,6 +19,8 @@ defmodule Orchestra.Git.Cloner do
       )
   """
 
+  @type t :: module()
+
   @doc """
   Efficiently clones a specific path from a Git repository.
 

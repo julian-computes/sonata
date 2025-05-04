@@ -1,4 +1,5 @@
 defmodule Orchestra.Utils.SystemBehaviour do
+  @type t :: module()
   @callback cmd(binary(), [binary()], keyword()) ::
               {Collectable.t(), exit_status :: non_neg_integer()}
 end

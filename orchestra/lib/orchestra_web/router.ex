@@ -21,9 +21,11 @@ defmodule OrchestraWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", OrchestraWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", OrchestraWeb do
+    pipe_through :api
+
+    post "/workflows/execute", WorkflowExecutorController, :execute
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:orchestra, :dev_routes) do
