@@ -59,6 +59,7 @@ defmodule Sonata.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:temp, "~> 0.4.9"},
+      {:yaml_elixir, "~> 2.11"},
       {:mox, "~> 1.2", only: :test}
     ]
   end
