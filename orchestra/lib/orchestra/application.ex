@@ -33,8 +33,4 @@ defmodule Orchestra.Application do
     OrchestraWeb.Endpoint.config_change(changed, removed)
     :ok
   end
-
-  def system do
-    Application.get_env(:orchestra, :system, Orchestra.Utils.System)
-  end
 end

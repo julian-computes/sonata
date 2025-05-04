@@ -46,8 +46,7 @@ defmodule Orchestra.Git.Cloner do
       {:ok, "/tmp/sonata/example-workflows/hello-world"}
 
   """
-  @spec clone(String.t(), String.t(), String.t()) ::
-          {:ok, String.t()} | {:error, String.t()}
+  @callback clone(String.t(), String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def clone(git_url, workflow_path, dest_path) do
     with :ok <- init_repo(dest_path),
          :ok <- add_remote(git_url, dest_path),
@@ -66,7 +65,10 @@ defmodule Orchestra.Git.Cloner do
   end
 
   defp enable_sparse_checkout(workflow_path, dest_path) do
-    with :ok <- run_git_command(["config", "core.sparseCheckout", "true"], "enable sparse-checkout", cd: dest_path) do
+    with :ok <-
+           run_git_command(["config", "core.sparseCheckout", "true"], "enable sparse-checkout",
+             cd: dest_path
+           ) do
       write_sparse_checkout_config(workflow_path, dest_path)
     end
   end
@@ -90,8 +92,7 @@ defmodule Orchestra.Git.Cloner do
   defp run_git_command(args, operation, opts \\ []) do
     opts = Keyword.merge([into: "", stderr_to_stdout: true], opts)
 
-
-    case Orchestra.Application.system().cmd("git", args, opts) do
+    case Orchestra.system().cmd("git", args, opts) do
       {_, 0} -> :ok
       {error, _} -> {:error, "Failed to #{operation}: #{error}"}
     end

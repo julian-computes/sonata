@@ -5,6 +5,7 @@ defmodule Orchestra.Runtime.DenoRuntime do
 
   @workflow_runner_path Application.app_dir(:orchestra, "priv/deno/workflow-runner.ts")
 
+  @callback execute_file(String.t(), list()) :: {:ok, map()} | {:error, String.t()}
   def execute_file(folder_path, params \\ []) do
     with {:ok, main_file_path} <- validate_main_file(folder_path),
          {:ok, temp_path} <- create_temp_file(),
@@ -48,7 +49,7 @@ defmodule Orchestra.Runtime.DenoRuntime do
       deno_args =
         build_deno_args(@workflow_runner_path, folder_path, main_file_path, temp_path, params)
 
-      case Orchestra.Application.system().cmd("deno", deno_args,
+      case Orchestra.system().cmd("deno", deno_args,
              stderr_to_stdout: true,
              cd: folder_path
            ) do
