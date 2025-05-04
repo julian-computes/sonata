@@ -8,8 +8,6 @@ defmodule Sonata.Executor.DAGExecutor do
       |> Enum.reduce("", fn node, acc ->
         {:ok, {execution_result, _output}} = execute_node(node, metadata, acc)
 
-        IO.inspect(_output)
-
         execution_result
       end)
 
