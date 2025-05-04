@@ -3,8 +3,8 @@ defmodule Sonata.Runtime.DenoRuntime do
   Runtime for executing JavaScript/TypeScript workflows using Deno.
   """
 
-  @callback execute_file(String.t(), list()) :: {:ok, {map(), String.t()}} | {:error, String.t()}
-  def execute_file(folder_path, params \\ []) do
+  @callback execute_file(String.t(), map()) :: {:ok, {map(), String.t()}} | {:error, String.t()}
+  def execute_file(folder_path, params \\ %{}) do
     impl().execute_file(folder_path, params)
   end
 
@@ -14,10 +14,12 @@ defmodule Sonata.Runtime.DenoRuntime do
 end
 
 defmodule Sonata.Runtime.DenoRuntimeImpl do
+  @behaviour Sonata.Runtime.DenoRuntime
+
   @workflow_runner_path Application.app_dir(:sonata, "priv/deno/workflow-runner.ts")
 
-  @callback execute_file(String.t(), list()) :: {:ok, {map(), String.t()}} | {:error, String.t()}
-  def execute_file(folder_path, params \\ []) do
+  @impl true
+  def execute_file(folder_path, params \\ %{}) do
     with {:ok, main_file_path} <- validate_main_file(folder_path),
          {:ok, temp_path} <- create_temp_file(),
          {:ok, result, output} <-
@@ -82,8 +84,11 @@ defmodule Sonata.Runtime.DenoRuntimeImpl do
 
   defp parse_output(output) do
     case Jason.decode(output) do
-      {:ok, result} -> {:ok, result}
-      {:error, _} -> {:error, "Invalid JSON response: #{output}"}
+      {:ok, result} ->
+        {:ok, result}
+
+      {:error, _e} ->
+        {:error, "Invalid JSON response: #{output}"}
     end
   end
 end

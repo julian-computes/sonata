@@ -1,3 +1,3 @@
-export const main = (args: unknown[]) => {
-    return "Echo: " + args.join(" ");
+export const main = (arg: unknown) => {
+    return "Echo: " + JSON.stringify(arg);
 };

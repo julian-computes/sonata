@@ -8,6 +8,7 @@ const args = Deno.args.reduce((map, arg, index, array) => {
 
 const workflowPath = Deno.args[0]; // First arg is always the workflow path
 const outputPath = args.get("--output")!;
+const params = JSON.parse(args.get("--params")!);
 
 const main = async () => {
   if (!workflowPath) {
@@ -23,7 +24,7 @@ const main = async () => {
   }
 
   // Execute the main function in the sandboxed context
-  return workflow.main();
+  return workflow.main(params);
 };
 
 try {
@@ -36,11 +37,18 @@ try {
     }),
   );
 } catch (error) {
+  const serializedError = error instanceof Error
+    ? JSON.stringify({
+      message: error.message,
+      stack: error.stack,
+    })
+    : JSON.stringify(error);
+
   await Deno.writeTextFile(
     outputPath,
     JSON.stringify({
       status: "error",
-      error,
+      error: serializedError,
     }),
   );
 }

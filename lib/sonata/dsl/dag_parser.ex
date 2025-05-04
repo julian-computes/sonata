@@ -1,4 +1,4 @@
-defmodule Sonata.DSL.Parser do
+defmodule Sonata.DSL.DagParser do
   def parse(content) do
     content = String.trim(content, "\n")
     split = Regex.split(~r/---\n/, content, parts: 3)
@@ -13,9 +13,9 @@ defmodule Sonata.DSL.Parser do
   end
 
   defp create_graph(metadata_yaml, mermaid_string) do
-    metadata_yaml = parse_yaml(metadata_yaml)
+    metadata = parse_yaml(metadata_yaml)
     diagram = parse_diagram(mermaid_string)
-    {:ok, %{metadata_yaml: metadata_yaml, diagram: diagram}}
+    {:ok, %{metadata: metadata, diagram: diagram}}
   end
 
   defp parse_yaml(yaml) do

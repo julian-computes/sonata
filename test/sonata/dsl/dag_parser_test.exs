@@ -1,4 +1,4 @@
-defmodule Sonata.Dsl.ParserTest do
+defmodule Sonata.Dsl.DagParserTest do
   use ExUnit.Case, async: true
 
   @valid_workflow """
@@ -24,7 +24,7 @@ defmodule Sonata.Dsl.ParserTest do
       assert {:ok,
               %{
                 diagram: ["hello", "echo", "echo"],
-                metadata_yaml: %{
+                metadata: %{
                   "nodes" => %{
                     "echo" => %{
                       "git_url" => "https://github.com/julian-computes/sonata.git",
@@ -39,7 +39,7 @@ defmodule Sonata.Dsl.ParserTest do
                   },
                   "title" => "Hello Echo Graph"
                 }
-              }} = Sonata.DSL.Parser.parse(@valid_workflow)
+              }} = Sonata.DSL.DagParser.parse(@valid_workflow)
     end
 
     test "fails to parse a syntactically incorrect workflow" do
@@ -51,7 +51,7 @@ defmodule Sonata.Dsl.ParserTest do
           runtime: deno
       """
 
-      assert {:error, _, _} = Sonata.DSL.Parser.parse(invalid_workflow)
+      assert {:error, _, _} = Sonata.DSL.DagParser.parse(invalid_workflow)
     end
   end
 end
