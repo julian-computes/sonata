@@ -4,6 +4,11 @@ defmodule Orchestra.Runtime.DenoRuntimeTest do
 
   setup :verify_on_exit!
 
+  setup do
+    Process.put(:orchestra_utils_system, Orchestra.Utils.SystemMock)
+    :ok
+  end
+
   @mock_result %{
     "status" => "success",
     "result" => %{"message" => "Workflow executed successfully"}

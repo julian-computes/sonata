@@ -7,6 +7,11 @@ defmodule OrchestraWeb.WorkflowExecutorControllerTest do
   @repo_url "https://github.com/julian-computes/sonata.git"
   @workflow_path "example-workflows/hello-world"
 
+  setup do
+    Process.put(:orchestra_executor_workflowexecutor, Orchestra.Executor.WorkflowExecutorMock)
+    :ok
+  end
+
   describe "execute/2" do
     test "successfully executes workflow", %{conn: conn} do
       mock_result = %{"status" => "success", "message" => "Hello, World!"}

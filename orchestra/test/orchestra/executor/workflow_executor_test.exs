@@ -7,6 +7,13 @@ defmodule Orchestra.Executor.WorkflowExecutorTest do
   @repo_url "https://github.com/julian-computes/sonata.git"
   @workflow_path "example-workflows/hello-world"
 
+  setup do
+    Process.put(:orchestra_utils_system, Orchestra.Utils.SystemMock)
+    Process.put(:orchestra_git_cloner, Orchestra.Git.ClonerMock)
+    Process.put(:orchestra_runtime_denoruntime, Orchestra.Runtime.DenoRuntimeMock)
+    :ok
+  end
+
   describe "execute/3" do
     test "successfully executes workflow" do
       expect(Orchestra.Git.ClonerMock, :clone, fn @repo_url, @workflow_path, tmp_dir ->

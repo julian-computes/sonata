@@ -19,8 +19,6 @@ defmodule Orchestra.Git.Cloner do
       )
   """
 
-  @type t :: module()
-
   @doc """
   Efficiently clones a specific path from a Git repository.
 
@@ -49,6 +47,19 @@ defmodule Orchestra.Git.Cloner do
 
   """
   @callback clone(String.t(), String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def clone(git_url, workflow_path, dest_path) do
+    impl().clone(git_url, workflow_path, dest_path)
+  end
+
+  defp impl do
+    Process.get(:orchestra_git_cloner, Orchestra.Git.ClonerImpl)
+  end
+end
+
+defmodule Orchestra.Git.ClonerImpl do
+  @behaviour Orchestra.Git.Cloner
+
+  @impl true
   def clone(git_url, workflow_path, dest_path) do
     with :ok <- init_repo(dest_path),
          :ok <- add_remote(git_url, dest_path),
@@ -94,7 +105,7 @@ defmodule Orchestra.Git.Cloner do
   defp run_git_command(args, operation, opts \\ []) do
     opts = Keyword.merge([into: "", stderr_to_stdout: true], opts)
 
-    case Orchestra.system().cmd("git", args, opts) do
+    case Orchestra.Utils.System.cmd("git", args, opts) do
       {_, 0} -> :ok
       {error, _} -> {:error, "Failed to #{operation}: #{error}"}
     end

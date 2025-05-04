@@ -2,7 +2,7 @@ defmodule OrchestraWeb.WorkflowExecutorController do
   use OrchestraWeb, :controller
 
   def execute(conn, %{"git_url" => git_url, "workflow_path" => workflow_path}) do
-    case Orchestra.workflow_executor().execute(git_url, workflow_path, []) do
+    case Orchestra.Executor.WorkflowExecutor.execute(git_url, workflow_path, []) do
       {:ok, {result, output}} ->
         conn
         |> put_status(:ok)

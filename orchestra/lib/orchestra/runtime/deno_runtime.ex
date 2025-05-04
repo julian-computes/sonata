@@ -3,8 +3,17 @@ defmodule Orchestra.Runtime.DenoRuntime do
   Runtime for executing JavaScript/TypeScript workflows using Deno.
   """
 
-  @type t :: module()
+  @callback execute_file(String.t(), list()) :: {:ok, {map(), String.t()}} | {:error, String.t()}
+  def execute_file(folder_path, params \\ []) do
+    impl().execute_file(folder_path, params)
+  end
 
+  defp impl do
+    Process.get(:orchestra_runtime_denoruntime, Orchestra.Runtime.DenoRuntimeImpl)
+  end
+end
+
+defmodule Orchestra.Runtime.DenoRuntimeImpl do
   @workflow_runner_path Application.app_dir(:orchestra, "priv/deno/workflow-runner.ts")
 
   @callback execute_file(String.t(), list()) :: {:ok, {map(), String.t()}} | {:error, String.t()}
@@ -53,7 +62,7 @@ defmodule Orchestra.Runtime.DenoRuntime do
       deno_args =
         build_deno_args(@workflow_runner_path, folder_path, main_file_path, temp_path, params)
 
-      case Orchestra.system().cmd("deno", deno_args,
+      case Orchestra.Utils.System.cmd("deno", deno_args,
              stderr_to_stdout: true,
              cd: folder_path
            ) do

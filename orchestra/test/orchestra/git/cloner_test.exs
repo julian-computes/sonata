@@ -9,8 +9,7 @@ defmodule Orchestra.Git.ClonerTest do
 
   # Set up mock expectations for the test process
   setup do
-    # Each test process gets its own mock
-    Mox.stub_with(Orchestra.Utils.SystemMock, Orchestra.system())
+    Process.put(:orchestra_utils_system, Orchestra.Utils.SystemMock)
 
     {:ok, dest_path} = Temp.mkdir("cloner_test")
     on_exit(fn -> File.rm_rf!(dest_path) end)
