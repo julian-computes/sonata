@@ -27,12 +27,12 @@ defmodule Orchestra.Runtime.DenoRuntime do
     Temp.path(%{suffix: ".json"})
   end
 
-  defp build_deno_args(runner_path, folder_path,main_file_path, temp_path, params) do
+  defp build_deno_args(runner_path, folder_path, main_file_path, temp_path, params) do
     params_json = Jason.encode!(params)
 
     [
       "run",
-      "--allow-read=#{folder_path}",
+      "--allow-read=#{folder_path},.",
       "--allow-write=#{temp_path}",
       runner_path,
       main_file_path,
@@ -45,8 +45,13 @@ defmodule Orchestra.Runtime.DenoRuntime do
 
   defp run_deno_workflow(folder_path, main_file_path, temp_path, params) do
     try do
-      deno_args = build_deno_args(@workflow_runner_path, folder_path, main_file_path, temp_path, params)
-      case Orchestra.Application.system().cmd("deno", deno_args, stderr_to_stdout: true, cd: folder_path) do
+      deno_args =
+        build_deno_args(@workflow_runner_path, folder_path, main_file_path, temp_path, params)
+
+      case Orchestra.Application.system().cmd("deno", deno_args,
+             stderr_to_stdout: true,
+             cd: folder_path
+           ) do
         {output, 0} ->
           IO.puts("Output: #{output}")
           File.read(temp_path)
